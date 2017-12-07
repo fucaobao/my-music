@@ -42,7 +42,7 @@
           if(index < HOT_SINGER_LEN) {
             map.hot.items.push(new Singer({
               id: item.Fsinger_mid,
-              name: item.Fother_name
+              name: item.Fsinger_name
             }))
           }
           const key = item.Findex
@@ -54,7 +54,7 @@
           }
           map[key].items.push(new Singer({
               id: item.Fsinger_mid,
-              name: item.Fother_name
+              name: item.Fsinger_name
           }))
         })
         // 为了得到有序列表，需要处理map
@@ -71,6 +71,9 @@
             hot.push(val)
           }
         }
+        retNum.sort((a,b) => {
+          return a.title - b.title
+        })
         ret.sort((a,b) => {
           return a.title.charCodeAt(0) - b.title.charCodeAt(0)
         })
