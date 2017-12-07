@@ -1,11 +1,13 @@
 <template>
   <div class="recommend">
+    <!-- mounted的时候，初始化的dom，这个时候数据(异步的)可能还没有获取到，就会导致scroll无法滚动，这个时候就需要当获取到数据的时候，重新计算一次 -->
     <scroll class="recommend-content" :data="discList" ref="scroll">
         <div>
           <div v-if="recommends.length" class="slider-wrapper">
             <slider>
               <div v-for="item in recommends">
                 <a :href="item.linkUrl">
+                  <!-- loadImage解决discList比recommends后获取到的时候，滚动不能到底的BUG -->
                   <img @load="loadImage" :src="item.picUrl" />
                 </a>
               </div>
