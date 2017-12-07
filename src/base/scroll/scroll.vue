@@ -15,7 +15,7 @@
             },
             click: {
                 type: Boolean,
-                default: true
+                default: true //表示列表可以被点击
             },
             data: {
                 type: Array,

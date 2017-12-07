@@ -8,6 +8,7 @@
               <div v-for="item in recommends">
                 <a :href="item.linkUrl">
                   <!-- loadImage解决discList比recommends后获取到的时候，滚动不能到底的BUG -->
+                  <!-- 据说这个可以解决不能点击的BUG，但是我并没有出现不能点击的问题，暂时隐藏class="needsclick"  -->
                   <img @load="loadImage" :src="item.picUrl" />
                 </a>
               </div>
@@ -18,7 +19,7 @@
             <ul>
               <li v-for="item in discList" class="item">
                 <div class="icon">
-                  <img :src="item.imgurl" width="60" height="60"/>
+                  <img v-lazy="item.imgurl" width="60" height="60"/>
                 </div>
                 <div class="text">
                   <h2 class="name" v-html="item.creator.name"></h2>

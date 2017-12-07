@@ -76,9 +76,10 @@
                     scrollX: true,
                     scrollY: false,
                     momentum: false,
+                    click: true,//这里会导致图片无法点击，因为fastclick会和BScroll冲突，fastclick会截流BScroll的click事件，并阻止click事件
                     snap: {
-                        loop:true,
-                        threshold:0.3,
+                        loop: true,
+                        threshold: 0.3,
                         speed: 400
                     }
                 })
