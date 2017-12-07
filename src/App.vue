@@ -2,6 +2,7 @@
   <div id="app">
     <m-header></m-header>
     <tab></tab>
+    <!-- keep-alive这个是防止重复请求，第二次之后从缓存中获取 -->
     <keep-alive>
       <router-view></router-view>
     </keep-alive>

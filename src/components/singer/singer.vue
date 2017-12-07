@@ -1,12 +1,14 @@
 <template>
-  <div class="single">
+  <div class="singer">
+      <list-view :data="singers"></list-view>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
+  import Singer from 'common/js/singer'
+  import ListView from 'base/listview/listview'
   import { getSingerList } from 'api/singer';
   import {ERR_OK} from 'api/config'
-  import Singer from 'common/js/singer'
 
   const HOT_NAME = '热门'
   const HOT_SINGER_LEN = 10
@@ -25,8 +27,7 @@
         getSingerList().then((res) => {
           if(res.code === ERR_OK) {
             // console.log(res.data.list)
-            this.singers = res.data.list;
-            console.log(this._normalizeSingerList(this.singers))
+            this.singers = this._normalizeSingerList(res.data.list);
           }
         })
       },
@@ -75,15 +76,18 @@
         })
         return hot.concat(retNum).concat(ret)
       }
+    },
+    components: {
+      ListView
     }
   }
 
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-  .single
+  .singer
     position: fixed
     top: 88px
-    botton: 0
+    bottom: 0
     width: 100%
 </style>
