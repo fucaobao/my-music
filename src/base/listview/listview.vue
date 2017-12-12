@@ -18,6 +18,9 @@
                </li>
            </ul>
        </div>
+       <div class="list-fixed" v-show="fixedTitle">
+           <h1 class="fixed-title">{{fixedTitle}}</h1>
+       </div>
    </scroll>
 </template>
 
@@ -31,6 +34,8 @@
         created () {
             this.touch = {}
             this.listenScroll = true
+            // probeType: 1：滚动的时候会派发scroll事件，会截流。2：滚动的时候实时派发scroll事件，不会截流。 3：除了实时派发scroll事件，在swipe的情况下仍然能实时派发scroll事件
+            // 截流就是在滚动的过程中，不要实时派发，这样会让派发的 scorll 事件变少。如果不截流的话，在整个滚动过程中会实时派发 scroll 事件。
             this.probeType = 3
             this.listHeight = []
         },
@@ -51,6 +56,12 @@
                 return this.data.map((group) => {
                     return group.title.substring(0, 1)
                 })
+            },
+            fixedTitle() {
+                if(this.scrollY > 0) {
+                    return ''
+                }
+                return this.data[this.currentIndex] ? this.data[this.currentIndex].title : ''
             }
         },
         methods: {
@@ -62,9 +73,9 @@
                 this._scrollTo(anchorIndex)
             },
             onShortcutTouchMove(e) {
-                let firstTouch = e.touches[0]
-                this.touch.y2 = firstTouch.pageY
-                let delta = Math.floor((this.touch.y2 - this.touch.y1) / anchorHeight)
+                let secondTouch = e.touches[0]
+                this.touch.y2 = secondTouch.pageY
+                let delta = (this.touch.y2 - this.touch.y1) / anchorHeight | 0 //向下取整
                 let anchorIndex = parseInt(this.touch.anchorIndex) + delta
                 this._scrollTo(anchorIndex)
             },
@@ -72,13 +83,21 @@
                 this.scrollY = pos.y //向下滚动的时候pos.y为负数
             },
             _scrollTo(index) {
+                if(!index && index !== 0){
+                    return
+                }
+                if(index < 0) { //顶部
+                    index = 0
+                } else if(index > this.listHeight.length - 1){ //底部
+                    index = this.listHeight.length - 1
+                }
+                this.scrollY = -this.listHeight[index]
                 this.$refs.listview.scrollToElement(this.$refs.listGroup[index], 0)
             },
             _calculateHeight() {
                 this.listHeight = []
                 const list = this.$refs.listGroup
                 let height = 0
-                this.listHeight.push(height)
                 for(let i = 0; i < list.length; i++){
                     let item = list[i]
                     height += item.clientHeight
@@ -103,13 +122,13 @@
                 for(let i = 0; i < listHeight.length; i++){
                     let height1 = listHeight[i]
                     let height2 = listHeight[i+1]
-                    if(-newY > height1 && -newY < height2) {
+                    if(-newY >= height1 && -newY < height2) {
                         this.currentIndex = i
                         return
                     }
                 }
                 // 当滚动到底部，且-newY大于最后一个元素的上限
-                this.currentIndex = listHeight.length - 2
+                this.currentIndex = listHeight.length - 1
             }
         },
         components: {

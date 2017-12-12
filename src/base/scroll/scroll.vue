@@ -9,6 +9,8 @@
 
     export default {
         props: {
+            // probeType: 1：滚动的时候会派发scroll事件，会截流。2：滚动的时候实时派发scroll事件，不会截流。 3：除了实时派发scroll事件，在swipe的情况下仍然能实时派发scroll事件
+            // 截流就是在滚动的过程中，不要实时派发，这样会让派发的 scorll 事件变少。如果不截流的话，在整个滚动过程中会实时派发 scroll 事件。
             probeType:{
                 type: Number,
                 default: 1
