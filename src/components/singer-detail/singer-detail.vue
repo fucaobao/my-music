@@ -5,11 +5,21 @@
 </template>
 
 <script type="text/ecmascript-6">
+    import {mapGetters} from 'vuex'
+
     export default {
         data () {
             return {
 
             }
+        },
+        computed: {
+            ...mapGetters([
+                'singer'
+            ])
+        },
+        created() {
+            console.log(this.singer)
         },
         components: {
 
