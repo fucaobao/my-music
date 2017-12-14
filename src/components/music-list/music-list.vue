@@ -59,8 +59,11 @@
             this.probeType = 3
             this.listenScroll = true
         },
-        mounted () {
+        mounted () {//mounted在整个生命周期只执行一次
             console.log(this.$router)
+            this.imageHeight = this.$refs.bgImage.clientHeight
+            // console.log(this.imageHeight)
+            this.minTranslateY = - this.imageHeight + RESERVED_HEIGHT
             this.$refs.list.$el.style.top = `${this.$refs.bgImage.clientHeight}px`;
         },
         computed: {
@@ -70,8 +73,6 @@
         },
         methods: {
             scroll(pos) {
-                this.imageHeight = this.$refs.bgImage.clientHeight
-                this.minTranslateY = - this.imageHeight + RESERVED_HEIGHT
                 this.scrollY = pos.y;
             },
             back() {
@@ -85,7 +86,7 @@
                 let scale = 1
                 this.$refs.layer.style[transform] = `translate3d(0,${translateY}px,0)`
                 const percent = Math.abs(newY / this.imageHeight)
-                if(newY > 0) {
+                if(newY > 0) {//下拉的时候newY才会大于0
                     scale = 1 + percent
                     zIndex = 10
                 } else {
@@ -93,6 +94,7 @@
                 }
                 // 用于IOS下图片的高斯模糊
                 this.$refs.filter.style[backdrop] = `blur(${blur}px)`
+                // 滑倒顶部的时候
                 if(newY < this.minTranslateY){
                     zIndex = 10
                     this.$refs.bgImage.style.paddingTop = 0
