@@ -1,6 +1,6 @@
 <template>
     <transition name="slide">
-        <div class="singer-detail"></div>
+        <music-list :songs="songs" :title="title" :bg-image="bgImage"></music-list>
     </transition>
 </template>
 
@@ -9,6 +9,7 @@
     import {getSingerDetail} from 'api/singer';
     import {ERR_OK} from 'api/config'
     import {createSong} from 'common/js/song'
+    import MusicList from 'components/music-list/music-list'
 
     export default {
         data () {
@@ -17,6 +18,13 @@
             }
         },
         computed: {
+            title() {
+                return this.singer.name
+            },
+            bgImage() {
+                console.log(this.singer)
+                return this.singer.avatar
+            },
             ...mapGetters([
                 'singer'
             ])
@@ -52,7 +60,7 @@
             }
         },
         components: {
-
+            MusicList
         }
     }
 </script>
@@ -61,15 +69,6 @@
   // vue-html-loader and css-loader translates non-root URLs to relative paths. In order to treat it like a module path, prefix it with ~
   //~就是告诉加载器它是一个模块，而不是相对路径
   @import "~common/stylus/variable"
-
-  .singer-detail
-    position: fixed
-    z-index: 100
-    left: 0
-    right: 0
-    top: 0
-    bottom: 0
-    background: $color-background
     // https://cn.vuejs.org/v2/guide/transitions.html#
     // 在进入/离开的过渡中，会有 6 个 class 切换。
     // v-enter：定义进入过渡的开始状态。在元素被插入时生效，在下一个帧移除。
