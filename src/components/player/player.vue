@@ -1,6 +1,10 @@
 <template>
     <div class="player" v-show="playlist.length">
-        <transition name="normal">
+        <transition name="normal"
+                    @enter="enter"
+                    @after-enter="afterEnter"
+                    @leave="leave"
+                    @after-leave="afterLeave">
           <div class="normal-player" v-show="fullScreen">
               <div class="background">
                   <img width="100%" height="100%" :src="currentSong.image">
@@ -62,6 +66,7 @@
 
 <script type="text/ecmascript-6">
     import {mapGetters,mapMutations} from 'vuex'
+    import animation from 'create-keyframe-animation'
 
     export default {
         computed: {
@@ -77,6 +82,18 @@
             },
             open() {
                 this.setFullScreen(true)
+            },
+            enter(el, done){
+
+            },
+            afterEnter(el) {
+
+            },
+            leave(el, done){
+
+            },
+            afterLeave(el){
+
             },
             ...mapMutations({
                 setFullScreen:'SET_FULL_SCREEN'
