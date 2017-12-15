@@ -34,6 +34,7 @@
 
     const RESERVED_HEIGHT = 40
     const transform = prefixStyle('transform')
+    const filter = prefixStyle('filter')
     const backdrop = prefixStyle('backdrop-filter')
 
     export default {
@@ -103,6 +104,7 @@
                     blur = Math.min(20 * percent, 20)
                 }
                 // 用于IOS下图片的高斯模糊
+                this.$refs.filter.style[filter] = `blur(${blur}px)`
                 this.$refs.filter.style[backdrop] = `blur(${blur}px)`
                 // 滑倒顶部的时候
                 if(newY < this.minTranslateY){

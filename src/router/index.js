@@ -11,7 +11,7 @@ import Search from 'components/search/search'
 Vue.use(Router)
 
 export default new Router({
-  // mode: 'hash',//hash(默认值，浏览器环境),history,abstract(Node.js 环境)
+  mode: 'hash',//hash(默认值，浏览器环境),history,abstract(Node.js 环境)
   routes: [
     {
       path: '/',
