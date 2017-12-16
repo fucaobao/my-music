@@ -27,6 +27,12 @@
                   </div>
               </div>
               <div class="bottom">
+                  <div class="progress-wrapper">
+                    <span class="time time-l">{{format(currentTime)}}</span>
+                      <div class="progress-bar-wrapper">
+                      </div>
+                    <span class="time time-r">{{format(currentSong.duration)}}</span>
+                  </div>
                   <div class="operators">
                       <div class="icon i-left">
                           <i class="icon-sequence"></i>
@@ -65,7 +71,8 @@
           </div>
         </transition>
         <!-- 歌曲的src准备好了之后，会派发canplay事件 -->
-        <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error"></audio>
+        <!-- timeupdate当播放位置改变时（比如当用户快进到媒介中一个不同的位置时）运行的脚本 -->
+        <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error" @timeupdate="updateTime"></audio>
     </div>
 </template>
 
@@ -80,7 +87,8 @@
     export default {
         data() {
           return {
-            songReady: false
+            songReady: false,
+            currentTime: 0
           }
         },
         computed: {
@@ -151,23 +159,6 @@
               this.$refs.cdWrapper.style.animation = ''
               this.$refs.cdWrapper.style[transform] = ''
             },
-            _getPosAndScale() {
-              const targetWidth = 40
-              const paddingLeft = 40
-              const paddingBottom = 30
-              const paddingTop = 80
-              const width = window.innerWidth * 0.8
-              const scale = targetWidth / width
-              // 这里的x，y指的是左下角mini-player图像的中心点1相对于 normal-player图像的中心点2 的值
-              // 因为点1相对于点2在左下方，所以x为负数，y为正数
-              const x = -(window.innerWidth / 2 - paddingLeft)
-              const y = window.innerHeight - paddingTop - width / 2 - paddingBottom
-              return {
-                x,
-                y,
-                scale
-              }
-            },
             togglePlaying() {
               this.setPlayingState(!this.playing)
             },
@@ -204,6 +195,40 @@
             },
             error() {
               this.songReady = true
+            },
+            updateTime(e) {
+              this.currentTime = e.target.currentTime
+            },
+            format(interval) {
+              interval = interval | 0
+              const minute = interval / 60 | 0
+              const second = this._pad(interval % 60)
+              return `${minute}:${second}`
+            },
+            _pad(num, n=2) {
+              let len = num.toString().length
+              while(len < n){
+                num = '0' + num
+                len++
+              }
+              return num
+            },
+            _getPosAndScale() {
+              const targetWidth = 40
+              const paddingLeft = 40
+              const paddingBottom = 30
+              const paddingTop = 80
+              const width = window.innerWidth * 0.8
+              const scale = targetWidth / width
+              // 这里的x，y指的是左下角mini-player图像的中心点1相对于 normal-player图像的中心点2 的值
+              // 因为点1相对于点2在左下方，所以x为负数，y为正数
+              const x = -(window.innerWidth / 2 - paddingLeft)
+              const y = window.innerHeight - paddingTop - width / 2 - paddingBottom
+              return {
+                x,
+                y,
+                scale
+              }
             },
             ...mapMutations({
                 setFullScreen: 'SET_FULL_SCREEN',
