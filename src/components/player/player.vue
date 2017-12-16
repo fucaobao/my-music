@@ -30,6 +30,7 @@
                   <div class="progress-wrapper">
                     <span class="time time-l">{{format(currentTime)}}</span>
                       <div class="progress-bar-wrapper">
+                        <progress-bar :percent="percent" @percentChange="onProgressBarChange"></progress-bar>
                       </div>
                     <span class="time time-r">{{format(currentSong.duration)}}</span>
                   </div>
@@ -81,6 +82,7 @@
     import {mapGetters,mapMutations} from 'vuex'
     // https://github.com/HenrikJoreteg/create-keyframe-animation
     import animations from 'create-keyframe-animation'
+    import ProgressBar from 'base/progress-bar/progress-bar'
 
     const transform = prefixStyle('transform')
 
@@ -92,6 +94,10 @@
           }
         },
         computed: {
+            // 歌曲播放的比例
+            percent() {
+              return this.currentTime / this.currentSong.duration
+            },
             cdCls() {
               return this.playing ? 'play' : 'play pause'
             },
@@ -205,6 +211,12 @@
               const second = this._pad(interval % 60)
               return `${minute}:${second}`
             },
+            onProgressBarChange(percent) {
+              this.$refs.audio.currentTime = this.currentSong.duration * percent
+              if(!this.playing){
+                this.togglePlaying()
+              }
+            },
             _pad(num, n=2) {
               let len = num.toString().length
               while(len < n){
@@ -248,6 +260,9 @@
               newPlaying ? audio.play() : audio.pause()
             })
           }
+        },
+        components: {
+          ProgressBar
         }
     }
 </script>
