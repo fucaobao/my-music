@@ -36,6 +36,7 @@
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
+  // 圆默认以最右边那个点开始dashoffset，逆时针转90°，即可以最上面那个点开始转  
   @import "~common/stylus/variable"
 
   .progress-circle
