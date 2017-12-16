@@ -5,6 +5,7 @@
                     @after-enter="afterEnter"
                     @leave="leave"
                     @after-leave="afterLeave">
+
           <div class="normal-player" v-show="fullScreen">
               <div class="background">
                   <img width="100%" height="100%" :src="currentSong.image">
@@ -18,7 +19,7 @@
               </div>
               <div class="middle">
                   <div class="middle-l">
-                      <div class="cd-wrapper">
+                      <div class="cd-wrapper" ref="cdWrapper">
                           <div class="cd">
                               <img class="image" :src="currentSong.image">
                           </div>
@@ -65,8 +66,12 @@
 </template>
 
 <script type="text/ecmascript-6">
+    import {prefixStyle} from 'common/js/dom'
     import {mapGetters,mapMutations} from 'vuex'
-    import animation from 'create-keyframe-animation'
+    // https://github.com/HenrikJoreteg/create-keyframe-animation
+    import animations from 'create-keyframe-animation'
+
+    const transform = prefixStyle('transform')
 
     export default {
         computed: {
@@ -84,19 +89,63 @@
                 this.setFullScreen(true)
             },
             enter(el, done){
+                // animations
+              const {x,y,scale} = this._getPosAndScale()
+              let animation = {
+                0: {
+                  transform: `translate3d(${x}px,${y}px,0) scale(${scale})`
+                },
+                60: {
+                  transform: `translate3d(0,0,0) scale(1.1)`
+                },
+                100: {
+                  transform: `translate3d(0,0,0) scale(1)`
+                }
+              }
 
+              animations.registerAnimation({
+                name: 'move',
+                animation,
+                presets: {
+                  duration: 400,
+                  easing: 'linear'
+                }
+              })
+              animations.runAnimation(this.$refs.cdWrapper, 'move', done)
             },
             afterEnter(el) {
-
+              animations.unregisterAnimation('move')
+              this.$refs.cdWrapper.style.animation = ''
             },
             leave(el, done){
-
+              this.$refs.cdWrapper.style.transition = 'all 0.4s'
+              const {x,y,scale} = this._getPosAndScale()
+              this.$refs.cdWrapper.style[transform] = `translate3d(translate3d(${x}px,${y}px,0))  scale(${scale})`
+              this.$refs.cdWrapper.addEventListener('transitionend', done)
             },
             afterLeave(el){
-
+              this.$refs.cdWrapper.style.animation = ''
+              this.$refs.cdWrapper.style[transform] = ''
+            },
+            _getPosAndScale() {
+              const targetWidth = 40
+              const paddingLeft = 40
+              const paddingBottom = 30
+              const paddingTop = 80
+              const width = window.innerWidth * 0.8
+              const scale = targetWidth / width
+              // 这里的x，y指的是左下角mini-player图像的中心点1相对于 normal-player图像的中心点2 的值
+              // 因为点1相对于点2在左下方，所以x为负数，y为正数
+              const x = -(window.innerWidth / 2 - paddingLeft)
+              const y = window.innerHeight - paddingTop - width / 2 - paddingBottom
+              return {
+                x,
+                y,
+                scale
+              }
             },
             ...mapMutations({
-                setFullScreen:'SET_FULL_SCREEN'
+                setFullScreen: 'SET_FULL_SCREEN'
             })
         }
     }
