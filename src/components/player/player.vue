@@ -234,10 +234,8 @@
               let list = null
               if(mode === playMode.random){
                 list = shuffle(this.sequenceList)
-              } else if(mode === playMode.sequence) {
+              } else {
                 list = this.sequenceList
-              } else if(mode === playMode.loop){
-                list = [this.currentSong]
               }
               // 这里确保切换的时候，歌曲保持不变
               this._resetCurrentIndex(list)
