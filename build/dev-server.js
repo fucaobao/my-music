@@ -40,6 +40,30 @@ apiRoutes.get('/getDiscList', function(req, res){
   })
 })
 
+apiRoutes.get('/getLyric', function(req, res){
+  var url = 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg'
+  axios.get(url, {
+    headers: {
+      referer: 'https://c.y.qq.com/',
+      host: 'c.y.qq.com'
+    },
+    params: req.query
+  }).then((response) => {
+    var ret = response.data
+    if(typeof ret === 'string'){
+      var reg = /^\w+\(({[^()]+})\)$/
+      var matches = ret.match(reg)
+      // matches是一个数组，第一个元素是原来的字符串，第二个元素是括号中捕获到的内容
+      if(matches){
+        ret = JSON.parse(matches[1])
+      }
+    }
+    res.send(ret)
+  }).catch((e) => {
+    console.log(e)
+  })
+})
+
 app.use('/api', apiRoutes)
 
 var compiler = webpack(webpackConfig)
