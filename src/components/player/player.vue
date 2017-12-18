@@ -60,8 +60,8 @@
                 <img :class="cdCls" width="40" height="40" :src="currentSong.image">
             </div>
             <div class="text">
-                <h2 class="name"></h2>
-                <p class="desc" v-html="currentSong.singer"></p>
+                <h2 class="name" v-html="currentSong.singer"></h2>
+                <p class="desc" v-html="currentSong.name"></p>
             </div>
             <div class="control">
                <progress-circle :radius="radius" :percent="percent">
@@ -75,13 +75,14 @@
         </transition>
         <!-- 歌曲的src准备好了之后，会派发canplay事件 -->
         <!-- timeupdate当播放位置改变时（比如当用户快进到媒介中一个不同的位置时）运行的脚本 -->
-        <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error" @timeupdate="updateTime"></audio>
+        <audio :src="currentSong.url" ref="audio" @canplay="ready" @error="error" @timeupdate="updateTime" @ended="end"></audio>
     </div>
 </template>
 
 <script type="text/ecmascript-6">
     import {prefixStyle} from 'common/js/dom'
     import {playMode} from 'common/js/config'
+    import {shuffle} from 'common/js/util'
     import {mapGetters,mapMutations} from 'vuex'
     // https://github.com/HenrikJoreteg/create-keyframe-animation
     import animations from 'create-keyframe-animation'
@@ -125,7 +126,9 @@
                 'currentSong',
                 'playing',
                 'currentIndex',
-                'mode'
+                'mode',
+                'sequenceList',
+                'playList'
             ])
         },
         methods: {
@@ -191,6 +194,17 @@
               }
               this.songReady = false
             },
+            end() {
+              if(this.mode === playMode.loop){
+                this.loop()
+              } else {
+                this.next()
+              }
+            },
+            loop() {
+              this.$refs.audio.currentTime = 0
+              this.$refs.audio.play()
+            },
             prev() {
               if(!this.songReady){
                 return
@@ -217,6 +231,23 @@
             changeMode() {
               const mode = (this.mode + 1) % 3
               this.setPlayMode(mode)
+              let list = null
+              if(mode === playMode.random){
+                list = shuffle(this.sequenceList)
+              } else if(mode === playMode.sequence) {
+                list = this.sequenceList
+              } else if(mode === playMode.loop){
+                list = [this.currentSong]
+              }
+              // 这里确保切换的时候，歌曲保持不变
+              this._resetCurrentIndex(list)
+              this.setPlaylist(list)
+            },
+            _resetCurrentIndex(list) {
+              let index = list.findIndex((item) => {
+                 return item.id === this.currentSong.id
+              })
+              this.setCurrentIndex(index)
             },
             format(interval) {
               interval = interval | 0
@@ -259,11 +290,17 @@
                 setFullScreen: 'SET_FULL_SCREEN',
                 setPlayingState: 'SET_PLAYING_STATE',
                 setCurrentIndex: 'SET_CURRENT_INDEX',
-                setPlayMode: 'SET_PLAY_MODE'
+                setPlayMode: 'SET_PLAY_MODE',
+                setPlaylist: 'SET_PLAYLIST'
             })
         },
         watch: {
-          currentSong() {
+          currentSong(newSong, oldSong) {
+            // 切换播发模式的时候，即使歌曲没变，也会触发currentSong，这里增加一个判断
+            // 如果歌曲没变，什么都不做
+            if(newSong.id === oldSong.id){
+              return
+            }
             this.$nextTick(() => {
               this.$refs.audio.play()
             })
