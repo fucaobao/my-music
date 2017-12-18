@@ -127,8 +127,7 @@
                 'playing',
                 'currentIndex',
                 'mode',
-                'sequenceList',
-                'playList'
+                'sequenceList'
             ])
         },
         methods: {
