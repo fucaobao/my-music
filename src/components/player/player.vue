@@ -35,8 +35,8 @@
                     <span class="time time-r">{{format(currentSong.duration)}}</span>
                   </div>
                   <div class="operators">
-                      <div class="icon i-left">
-                          <i class="icon-sequence"></i>
+                      <div class="icon i-left" @click="changeMode">
+                          <i :class="iconMode"></i>
                       </div>
                       <div class="icon i-left" :class="disableCls">
                           <i class="icon-prev" @click="prev"></i>
@@ -81,6 +81,7 @@
 
 <script type="text/ecmascript-6">
     import {prefixStyle} from 'common/js/dom'
+    import {playMode} from 'common/js/config'
     import {mapGetters,mapMutations} from 'vuex'
     // https://github.com/HenrikJoreteg/create-keyframe-animation
     import animations from 'create-keyframe-animation'
@@ -115,12 +116,16 @@
             disableCls() {
               return this.songReady ? '' : 'disable'
             },
+            iconMode() {
+              return this.mode === playMode.sequence ? 'icon-sequence' : (this.mode === playMode.loop ? 'icon-loop' : 'icon-random')
+            },
             ...mapGetters([
                 'fullScreen',
                 'playlist',
                 'currentSong',
                 'playing',
-                'currentIndex'
+                'currentIndex',
+                'mode'
             ])
         },
         methods: {
@@ -209,6 +214,10 @@
             updateTime(e) {
               this.currentTime = e.target.currentTime
             },
+            changeMode() {
+              const mode = (this.mode + 1) % 3
+              this.setPlayMode(mode)
+            },
             format(interval) {
               interval = interval | 0
               const minute = interval / 60 | 0
@@ -249,7 +258,8 @@
             ...mapMutations({
                 setFullScreen: 'SET_FULL_SCREEN',
                 setPlayingState: 'SET_PLAYING_STATE',
-                setCurrentIndex: 'SET_CURRENT_INDEX'
+                setCurrentIndex: 'SET_CURRENT_INDEX',
+                setPlayMode: 'SET_PLAY_MODE'
             })
         },
         watch: {
