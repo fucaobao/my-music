@@ -30,7 +30,7 @@
                       <div v-if="currentLyric">
                         <p ref="lyricLine"
                           class="text"
-                          :class="{'current':currentLineNum === index}"
+                          :class="{'current': currentLineNum ===index}"
                           v-for="(line,index) in currentLyric.lines">
                           {{line.txt}}
                         </p>
@@ -280,13 +280,14 @@
                 if(this.playing){
                   this.currentLyric.play()
                 }
-                // console.log(this.currentLyric)
+                console.log(this.currentLyric)
               })
             },
-            _handleLyric({num, txt}) {
-              this.currentLineNum = num
-              if(num > 5) {
-                let lineEl = this.$refs.lyricLine[num - 5]
+            _handleLyric({lineNum, txt}) {
+              this.currentLineNum = lineNum
+              console.log(lineNum)
+              if(lineNum > 5) {
+                let lineEl = this.$refs.lyricLine[lineNum - 5]
                 this.$refs.lyricList.scrollToElement(lineEl, 1000)
               } else {
                 this.$refs.lyricList.scrollTo(0, 0, 1000)
