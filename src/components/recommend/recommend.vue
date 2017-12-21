@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend">
+  <div class="recommend" ref="recommend">
     <!-- mounted的时候，初始化的dom，这个时候数据(异步的)可能还没有获取到，就会导致scroll无法滚动，这个时候就需要当获取到数据的时候，重新计算一次 -->
     <scroll class="recommend-content" :data="discList" ref="scroll">
         <div>
@@ -38,6 +38,7 @@
 
 <script type="text/ecmascript-6">
     import Singer from 'common/js/singer'
+    import {playlistMixin} from 'common/js/mixin'
     import Loading from 'base/loading/loading'
     import Scroll from 'base/scroll/scroll'
     import Slider from 'base/slider/slider'
@@ -57,6 +58,11 @@
         this._getDiscList()
       },
       methods: {
+        handlePlaylist(playlist) {
+            const bottom = playlist.length ? '60px' : ''
+            this.$refs.recommend.$el.style.bottom = bottom
+            this.$refs.scroll.refresh()
+        },
         _getRecommend() {
           getRecommend().then((res) => {
             if(res.code === ERR_OK) {

@@ -27,6 +27,7 @@
 
 <script type="text/ecmascript-6">
     import {prefixStyle} from 'common/js/dom'
+    import {playlistMixin} from 'common/js/mixin'
     import Scroll from 'base/scroll/scroll'
     import Loading from 'base/loading/loading'
     import SongList from 'base/song-list/song-list'
@@ -38,6 +39,7 @@
     const backdrop = prefixStyle('backdrop-filter')
 
     export default {
+        mixins: [playlistMixin],
         data () {
             return {
                 scrollY: 0
@@ -74,6 +76,11 @@
             }
         },
         methods: {
+            handlePlaylist(playlist) {
+                const bottom = playlist.length ? '60px' : ''
+                this.$refs.list.$el.style.bottom = bottom
+                this.$refs.list.refresh()
+            },
             scroll(pos) {
                 this.scrollY = pos.y;
             },
@@ -97,6 +104,11 @@
             ])
         },
         watch: {
+            handlePlaylist(playlist) {
+                const bottom = playlist.length ? '60px' : ''
+                this.$refs.list.$el.style.bottom = bottom
+                this.$refs.list.refresh()
+            },
             scrollY(newY) {
                 let translateY = Math.max(this.minTranslateY, newY)
                 let zIndex = 0
