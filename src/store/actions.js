@@ -4,7 +4,7 @@ import {shuffle} from 'common/js/util'
 
 function findIndex(list, song) {
     return list.findIndex((item) => {
-        return item.id === sond.id
+        return item.id === song.id
     })
 }
 
