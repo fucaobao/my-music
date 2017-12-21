@@ -13,7 +13,6 @@ export function getSingerList() {
         hostUin: 0,
         format: 'jsonp',
         platform: 'yqq',
-        g_tk: 456100168,
         needNewCode: 0
     })
 
@@ -37,7 +36,6 @@ export function getSingerDetail(singerId) {
         num: 300,
         songstatus: 1,
         platform: 'yqq',
-        g_tk: 456100168,
         needNewCode: 0
     })
 
