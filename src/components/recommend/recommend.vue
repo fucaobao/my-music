@@ -33,6 +33,7 @@
           <loading></loading>
         </div>
     </scroll>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -61,7 +62,7 @@
       methods: {
         handlePlaylist(playlist) {
             const bottom = playlist.length ? '60px' : ''
-            this.$refs.recommend.$el.style.bottom = bottom
+            this.$refs.recommend.style.bottom = bottom
             this.$refs.scroll.refresh()
         },
         _getRecommend() {
@@ -88,13 +89,13 @@
         },
         selectItem(item) {
           console.log(item)
-          // this.$router.push({
-          //   path: `/singer/${item.dissid}`
-          // })
-          // this.setSinger(new Singer({}))
+          this.$router.push({
+            path: `/recommend/${item.dissid}`
+          })
+          this.setDisc(item)
         },
         ...mapMutations({
-          setSinger: 'SET_SINGER'
+          setDisc: 'SET_DISC'
         })
       },
       components: {
