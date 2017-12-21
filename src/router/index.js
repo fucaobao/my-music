@@ -3,11 +3,12 @@ import Router from 'vue-router'
 // import Hello from '@/components/Hello'
 
 import Recommend from 'components/recommend/recommend'
+import Disc from 'components/disc/disc'
 import Singer from 'components/singer/singer'
 import SingerDetail from 'components/singer-detail/singer-detail'
 import Rank from 'components/rank/rank'
+import TopList from 'components/top-list/top-list'
 import Search from 'components/search/search'
-import Disc from 'components/disc/disc'
 
 Vue.use(Router)
 
@@ -40,7 +41,13 @@ export default new Router({
     },
     {
       path: '/rank',
-      component: Rank
+      component: Rank,
+      children : [
+        {
+          path: ':id',
+          component: TopList
+        }
+      ]
     },
     {
       path: '/search',
