@@ -47,6 +47,7 @@
     import {mapMutations} from 'vuex'
 
     export default {
+      mixins: [playlistMixin],
       data() {
         return {
           recommends: [],

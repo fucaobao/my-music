@@ -17,6 +17,7 @@
   const HOT_SINGER_LEN = 10
 
   export default {
+    mixins: [playlistMixin],
     data() {
       return {
         singers: []
