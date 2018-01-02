@@ -26,6 +26,10 @@
             listenScroll :{
                 type: Boolean,
                 default: false
+            },
+            pullup: {
+                type: Boolean,
+                default: false
             }
         },
         data () {
@@ -51,6 +55,14 @@
                     let me = this
                     me.scroll.on('scroll', (pos) => {
                         me.$emit('scroll', pos)
+                    })
+                }
+                if(this.pullup){
+                    this.scroll.on('scrollEnd', () => {
+                        // console.log(this.scroll.y)
+                        if(this.scroll.y <= (this.scroll.maxScrollY + 50)) {
+                            this.$emit('scrollToEnd')
+                        }
                     })
                 }
             },

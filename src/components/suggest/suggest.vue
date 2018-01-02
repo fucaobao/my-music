@@ -1,5 +1,9 @@
 <template>
-  <div class="suggest">
+  <scroll class="suggest"
+          :data="result"
+          :pullup="true"
+          @scrollToEnd="searchMore"
+          ref="suggest">
     <ul class="suggest-list">
       <li class="suggest-item" v-for="item in result">
         <div class="icon">
@@ -9,16 +13,20 @@
           <p class="text" v-html="getDisplayName(item)"></p>
         </div>
       </li>
+      <loading v-show="hasMore" title=""></loading>
     </ul>
-  </div>
+  </scroll>
 </template>
 
 <script type="text/ecmascript-6">
+    import Scroll from 'base/scroll/scroll'
+    import Loading from 'base/loading/loading'
     import {search} from 'api/search'
     import {ERR_OK} from 'api/config'
-    import {filterSingers} from 'common/js/song'
+    import {createSong} from 'common/js/song'
 
     const TYPE_SINGER = 'singer'
+    const PERPAGE = 20
 
     export default {
         props: {
@@ -34,22 +42,46 @@
         data () {
             return {
                 page: 1,
-                result: []
+                result: [],
+                pullup: true,
+                hasMore: true
             }
         },
         components: {
-
-        },
-        created () {
-            this._search()
+            Scroll,
+            Loading
         },
         methods: {
             _search() {
-                search(this.query,this.page,this.showSinger).then((res) => {
+                this.hasMore = true
+                this.page = 1
+                this.$refs.suggest.scrollTo(0,0)
+                search(this.query,this.page,this.showSinger,PERPAGE).then((res) => {
                     if(res.code === ERR_OK) {
                         this.result = this._genResult(res.data)
+                        this._checkMore(res.data)
                     }
                 })
+            },
+            searchMore() {
+                if(!this.hasMore){
+                    return
+                }
+                this.page++
+                search(this.query,this.page,this.showSinger,PERPAGE).then((res) => {
+                    if(res.code === ERR_OK) {
+                        this.result = this.result.concat(this._genResult(res.data))
+                        this._checkMore(res.data)
+                    }
+                })
+            },
+            _checkMore(data) {
+                const song = data.song
+                if(song.list.length || (song.curnum + song.curpage * PERPAGE) > song.total){
+                    this.hasMore = false
+                } else {
+                    this.hasMore = true
+                }
             },
             _genResult(data) {
                 let ret = []
@@ -58,8 +90,17 @@
                     ret.push({...data.zhida,...{type:TYPE_SINGER}})
                 }
                 if(data.song) {
-                    ret = ret.concat(data.song.list)
+                    ret = ret.concat(this._normalizeSongs(data.song.list))
                 }
+                return ret
+            },
+            _normalizeSongs(list) {
+                let ret = []
+                list.forEach((musicData) => {
+                    if(musicData.songid && musicData.albumid){
+                        ret.push(createSong(musicData))
+                    }
+                })
                 return ret
             },
             getIconClass(item) {
@@ -72,7 +113,7 @@
                 if(item.type === TYPE_SINGER){
                     return item.singername
                 }
-                return `${item.songname}-${filterSingers(item.singer)}`
+                return `${item.name}-${item.singer}`
             }
         },
         watch: {
