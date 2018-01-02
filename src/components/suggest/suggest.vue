@@ -1,7 +1,7 @@
 <template>
   <scroll class="suggest"
           :data="result"
-          :pullup="true"
+          :pullup="pullup"
           @scrollToEnd="searchMore"
           ref="suggest">
     <ul class="suggest-list">
@@ -77,10 +77,8 @@
             },
             _checkMore(data) {
                 const song = data.song
-                if(song.list.length || (song.curnum + song.curpage * PERPAGE) > song.total){
+                if(!song.list.length || (song.curnum + song.curpage * PERPAGE) > song.total){
                     this.hasMore = false
-                } else {
-                    this.hasMore = true
                 }
             },
             _genResult(data) {

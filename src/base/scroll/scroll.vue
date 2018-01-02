@@ -27,6 +27,7 @@
                 type: Boolean,
                 default: false
             },
+            // 下拉加载参数
             pullup: {
                 type: Boolean,
                 default: false
@@ -59,7 +60,7 @@
                 }
                 if(this.pullup){
                     this.scroll.on('scrollEnd', () => {
-                        // console.log(this.scroll.y)
+                        // 这里的值为负数
                         if(this.scroll.y <= (this.scroll.maxScrollY + 50)) {
                             this.$emit('scrollToEnd')
                         }
