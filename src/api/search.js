@@ -18,7 +18,7 @@ export function search(query, page, zhida) {
     const data = Object.assign({}, commonParams, {
         w: query,
         p: page,
-        catZhida: zhida ? 1 : 0,
+        catZhida: zhida ? 1 : 0,//表示是不是检索歌手
         platform: 'h5',
         needNewCode: 1,
         zhidaqu:1,
