@@ -16,7 +16,7 @@
         <div class="search-history" v-show="searchHistory.length">
           <h1 class="title">
             <span class="text">搜索历史</span>
-            <span class="clear" @click="clearSearchHistory">
+            <span class="clear" @click="showConfirm">
               <i class="icon-clear"></i>
             </span>
           </h1>
@@ -28,11 +28,13 @@
       <suggest :query="query" @listScroll="blurInput" @select="saveSearch"></suggest>
     </div>
     <router-view></router-view>
+    <confirm ref="confirm" @confirm="clearSearchHistory" text="是否清空所有搜索历史" confirmBtnText="清空"></confirm>
   </div>
 </template>
 
 <script type="text/ecmascript-6">
   import SearchBox from 'base/search-box/search-box'
+  import Confirm from 'base/confirm/confirm'
   import Scroll from 'base/scroll/scroll'
   import SearchList from 'base/search-list/search-list'
   import Suggest from 'components/suggest/suggest'
@@ -75,6 +77,9 @@
       saveSearch(item) {
         this.saveSearchHistory(this.query)
       },
+      showConfirm() {
+        this.$refs.confirm.show()
+      },
       ...mapActions([
         'saveSearchHistory',
         'deleteSearchHistory',
@@ -85,7 +90,8 @@
       SearchBox,
       Suggest,
       Scroll,
-      SearchList
+      SearchList,
+      Confirm
     }
   }
 </script>
