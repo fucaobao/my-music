@@ -78,6 +78,9 @@
                 }
                 this.$emit('select', item)
             },
+            refresh() {
+                this.$refs.suggest.refresh()
+            },
             _search() {
                 this.hasMore = true
                 this.page = 1
