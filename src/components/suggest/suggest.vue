@@ -3,6 +3,8 @@
           :data="result"
           :pullup="pullup"
           @scrollToEnd="searchMore"
+          :beforeScroll="beforeScroll"
+          @beforeScroll="listScroll"
           ref="suggest">
     <ul class="suggest-list">
       <li class="suggest-item" v-for="item in result" @click="selectItem(item)">
@@ -15,7 +17,9 @@
       </li>
       <loading v-show="hasMore" title=""></loading>
     </ul>
-    <router-view></router-view>
+    <div class="no-result-wrapper">
+        <no-result title="抱歉，暂无搜索结果" v-show="!hasMore && !result.length"></no-result>
+    </div>
   </scroll>
 </template>
 
@@ -23,6 +27,7 @@
     import {mapMutations,mapActions} from 'vuex'
     import Scroll from 'base/scroll/scroll'
     import Loading from 'base/loading/loading'
+    import NoResult from 'base/no-result/no-result'
     import {search} from 'api/search'
     import {ERR_OK} from 'api/config'
     import {createSong} from 'common/js/song'
@@ -47,12 +52,14 @@
                 page: 1,
                 result: [],
                 pullup: true,
+                beforeScroll: true,
                 hasMore: true
             }
         },
         components: {
             Scroll,
-            Loading
+            Loading,
+            NoResult
         },
         methods: {
             selectItem(item) {
@@ -79,6 +86,9 @@
                         this._checkMore(res.data)
                     }
                 })
+            },
+            listScroll() {
+                this.$emit('listScroll')
             },
             searchMore() {
                 if(!this.hasMore){

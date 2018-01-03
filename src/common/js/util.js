@@ -11,3 +11,17 @@ export function shuffle(arr) {
     }
     return _arr
 }
+
+// 截流函数，多次调用，只出发一次
+export function debounce(func, delay) {
+    let timer
+
+    return function(...args){
+        if(timer){
+            clearTimeout(timer)
+        }
+        timer = setTimeout(() => {
+            func.apply(this, args)
+        }, delay)
+    }
+}
