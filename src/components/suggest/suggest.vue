@@ -6,6 +6,7 @@
           :beforeScroll="beforeScroll"
           @beforeScroll="listScroll"
           ref="suggest">
+
     <ul class="suggest-list">
       <li class="suggest-item" v-for="item in result" @click="selectItem(item)">
         <div class="icon">
@@ -75,6 +76,7 @@
                 } else {
                     this.insertSong(item)
                 }
+                this.$emit('select', item)
             },
             _search() {
                 this.hasMore = true
